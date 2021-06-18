@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  space_invaders:
+    build: .
+    image: space_invaders:latest
+    command: /bin/bash
+    volumes: 
+      - .:/src
