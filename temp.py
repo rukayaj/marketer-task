@@ -8,8 +8,7 @@ def _im(s):
 def get_match_tolerance_threshold(total_chars, tolerance):
     return total_chars - (total_chars * tolerance)
 
-
-def scan(radar, invader, tolerance=0):  # A tolerance of 0 = must be perfect match, 0.2 = 80% match, etc
+def scan(invader, tolerance=0):  # A tolerance of 0 = must be perfect match, 0.2 = 80% match, etc
     i_length, i_width = invader.shape
     match_tolerance_threshold = get_match_tolerance_threshold(i_width * i_length, tolerance)
     print(f'threshold: {match_tolerance_threshold}')
