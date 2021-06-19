@@ -1,6 +1,7 @@
 import unittest
 from pandas.testing import assert_frame_equal
-from space_invader_matrices import RadarMatrix, InvaderMatrix
+from radar import RadarMatrix
+from invader import InvaderMatrix
 
 def _rm(_list):
     return RadarMatrix(data_list=_list)
