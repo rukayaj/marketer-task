@@ -14,7 +14,8 @@ class ProvidedExample(unittest.TestCase):
         invader_a = _im(self.get_invader_a())
         invader_b = _im(self.get_invader_b())
         radar = _rm(self.get_radar())
-        found = radar.scan(invader_a, 0.1)
+        # This shows that scan needs some major refactoring to be performant
+        found = radar.scan(invader_a, 0)
         import pdb; pdb.set_trace()
 
     def get_invader_a(self):
