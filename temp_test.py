@@ -85,47 +85,23 @@ class TestRadarScan(unittest.TestCase):
 
     # With noise
 
-    def finds_one_invader_with_noise_tolerance(self):
-        radar = Radar('\n'.join(['01000',
-                                 '11011',
-                                 '11011',
-                                 '00011']))
-        alien = Invader('\n'.join(['11', '11', '11']))
-        tolerance = (alien.width - 1) / alien.width
-        found = radar.scan(alien, tolerance)
-        self.assertEqual(found, {(0, 0), (3, 1)})
+    def test_finds_invaders_with_noise_tolerance(self):
+        radar = make_df('\n'.join(['0000',
+                                   '0010',
+                                   '0110',
+                                   '0000']))
+        alien = make_df('\n'.join(['11', '11']))
+        found = scan(radar, alien, 0.25)
+        self.assertEqual(found, {(-1, -1), (3, -1), (1, 1), (-1, 3), (3, 3)})
 
-    def excludes_invader_with_too_much_noise(self):
-        radar = Radar('\n'.join(['01000',
-                                 '01011',
-                                 '11011',
-                                 '00011']))
-        alien = Invader('\n'.join(['11', '11', '11']))
-        tolerance = (alien.width - 1) / alien.width
-        found = radar.scan(alien, tolerance)
-        self.assertEqual(found, {(3, 1)})
-
-    def finds_multiple_invaders_with_noise_tolerance(self):
-        radar = Radar('\n'.join(['01000',
-                                 '01010',
-                                 '11011',
-                                 '00011']))
-        alien = Invader('\n'.join(['11', '11', '11']))
-        tolerance = ((alien.width - 1) / alien.width) * 2
-        found = radar.scan(alien, tolerance)
-        self.assertEqual(found, {(0, 0), (3, 1)})
-
-    def excludes_multiple_invaders_with_noise_tolerance(self):
-        radar = Radar('\n'.join(['01000',
-                                 '01010',
-                                 '11010',
-                                 '00011']))
-        alien = Invader('\n'.join(['11', '11', '11']))
-        tolerance = (alien.width - 1) / alien.width
-        found = radar.scan(alien, tolerance)
-        self.assertEqual(found, set())
-
-    # Edges and corners - no tolerance
+    def test_excludes_invader_with_too_much_noise(self):
+        radar = make_df('\n'.join(['0000',
+                                   '0010',
+                                   '0010',
+                                   '0000']))
+        alien = make_df('\n'.join(['11', '11']))
+        found = scan(radar, alien, 0.25)
+        self.assertEqual(found, {(-1, -1), (3, -1), (-1, 3), (3, 3)})
 
 if __name__ == '__main__':
     unittest.main()
