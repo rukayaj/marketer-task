@@ -16,7 +16,11 @@ class RadarMatrix(_BaseMatrix):
         matrix = self.iloc[min_y:max_y, min_x:max_x]
         return matrix.reset_index(drop=True).T.reset_index(drop=True).T
 
-    def scan(self, invader, tolerance=0):  # A tolerance of 0 = must be perfect match, 0.2 = 80% match, etc
+    def scan(self, invader, tolerance=0):
+        """
+        Note that tolerance of 0 = must be a perfect match,  0.2 = 80% match, etc
+        Returns upper left coordinates of each found invader
+        """
         i_length, i_width = invader.shape
         radar = self.pad(i_length - 1, i_width - 1)
         r_length, r_width = radar.shape
@@ -27,6 +31,7 @@ class RadarMatrix(_BaseMatrix):
         for x in range(r_width - i_width + 1):
             for y in range(r_length - i_length + 1):
                 radar_subset = radar.crop(y, y + i_length, x, x + i_width)
+                # Ideally here we should get a matching score, not just a boolean and then return in order of likeliness
                 if invader.matched_in(radar_subset, tolerance):
                     found.add((x - i_width + 1, y - i_length + 1))
 
