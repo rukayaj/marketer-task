@@ -1,10 +1,9 @@
 import pandas as pd
-from matrices import RadarMatrix
 
 def _im(s):
     if '\n' in s:
         s = s.split('\n')
-    return RadarMatrix([list(x) for x in s])
+    return pd.DataFrame([list(x) for x in s])
 
 def get_match_tolerance_threshold(total_chars, tolerance):
     return total_chars - (total_chars * tolerance)
@@ -17,13 +16,16 @@ def scan(radar, invader, tolerance=0):  # A tolerance of 0 = must be perfect mat
     found = set()
     print(f'invader: {invader}')
     print('--------')
-    print(radar)
+    print(f'radar: {radar}')
     print('--------')
-    padded = pad(radar, i_length, i_width)
-    r_length, r_width = padded.shape
+    radar = radar.pad(i_length, i_width)
+    print('--------')
+    print(f'radar padded: {radar}')
+    print('--------')
+    r_length, r_width = radar.shape
     for x in range(r_width - i_width + 1):
         for y in range(r_length - i_length + 1):
-            crop_radar = crop(padded, y, y + i_length, x, x + i_width)
+            crop_radar = radar.crop(y, y + i_length, x, x + i_width)
             print(f'{y}:{y + i_length}, {x}:{x + i_width}')
             print(f'crop radar: {crop_radar}')
             print('----')

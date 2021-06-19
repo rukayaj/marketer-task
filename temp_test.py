@@ -1,5 +1,6 @@
 import unittest
 from temp import _im, scan, get_match_tolerance_threshold
+from space_invader_matrices import RadarMatrix
 
 
 class TestRadarScan(unittest.TestCase):
@@ -12,8 +13,7 @@ class TestRadarScan(unittest.TestCase):
         self.assertEqual(res, 500)
 
     def test_finds_invaders_simple(self):
-        radar = _im(['01', '00'])
-        import pdb; pdb.set_trace()
+        radar = RadarMatrix(data_list=['01', '00'])
         invader = _im(['01', '00'])
         found = scan(radar, invader)
         top_left_corner = (-1, -1)
