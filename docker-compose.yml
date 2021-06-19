@@ -4,7 +4,6 @@ services:
   space_invaders:
     build: .
     image: si:latest
-    #image: python:3.9.5-slim-buster
-    command: /bin/bash
+    command: python /src/tests.py
     volumes: 
       - .:/src
