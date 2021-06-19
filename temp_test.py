@@ -1,5 +1,5 @@
 import unittest
-from temp import make_df, scan, get_match_tolerance_threshold
+from temp import _im, scan, get_match_tolerance_threshold
 
 
 class TestRadarScan(unittest.TestCase):
@@ -12,10 +12,9 @@ class TestRadarScan(unittest.TestCase):
         self.assertEqual(res, 500)
 
     def test_finds_invaders_simple(self):
-        radar = make_df('\n'.join(['01',
-                                   '00']))
-        invader = make_df('\n'.join(['01',
-                                     '00']))
+        radar = _im(['01', '00'])
+        import pdb; pdb.set_trace()
+        invader = _im(['01', '00'])
         found = scan(radar, invader)
         top_left_corner = (-1, -1)
         middle = (0, 0)
@@ -23,83 +22,82 @@ class TestRadarScan(unittest.TestCase):
         self.assertEqual(found, {top_left_corner, middle, bottom_right_corner})
 
     def test_finds_invader_top_right(self):
-        radar = make_df('\n'.join(['0001',
-                                   '0001',
-                                   '0000']))
-        invader = make_df('\n'.join(['01',
-                                     '01']))
+        radar = _im(['0001',
+                     '0001',
+                     '0000'])
+        invader = _im(['01', '01'])
         found = scan(radar, invader)
         self.assertEqual(found, {(2, -1), (2, 0), (3, 2)})
 
     def test_finds_invader_top_left(self):
-        radar = make_df('\n'.join(['1000',
+        radar = _im(['1000',
                                    '1000',
-                                   '0000']))
-        invader = make_df('10\n10')
+                                   '0000'])
+        invader = _im(['10', '10'])
         found = scan(radar, invader)
         self.assertEqual(found, {(0, -1), (0, 0), (-1, 2)})
 
     def test_finds_invader_bottom_right(self):
-        radar = make_df('\n'.join(['0000',
+        radar = _im(['0000',
                                    '0001',
-                                   '0001']))
-        invader = make_df('01\n01')
+                                   '0001'])
+        invader = _im(['01', '01'])
         found = scan(radar, invader)
         self.assertEqual(found, {(3, -1), (2, 1), (2, 2)})
 
     def test_finds_invader_bottom_left(self):
-        radar = make_df('\n'.join(['0000',
+        radar = _im(['0000',
                                    '1000',
-                                   '1000']))
-        invader = make_df('10\n10')
+                                   '1000'])
+        invader = _im(['10', '10'])
         found = scan(radar, invader)
         self.assertEqual(found, {(-1, -1), (0, 1), (0, 2)})
 
     def test_finds_invader_middle(self):
-        radar = make_df('\n'.join(['0000',
+        radar = _im(['0000',
                                    '0110',
                                    '0110',
-                                   '0000']))
-        invader = make_df('11\n11')
+                                   '0000'])
+        invader = _im(['11', '11'])
         found = scan(radar, invader)
         self.assertEqual(found, {(1, 1)})
 
     def test_finds_multiple_invaders(self):
-        radar = make_df('\n'.join(['0000000',
+        radar = _im(['0000000',
                                    '0110110',
                                    '0110110',
-                                   '0000000']))
-        invader = make_df('\n'.join(['11', '11']))
+                                   '0000000'])
+        invader = _im(['11', '11'])
         found = scan(radar, invader)
         self.assertEqual(found, {(1, 1), (4, 1)})
 
     def test_finds_overlapping_invaders(self):
-        radar = make_df('\n'.join(['0000000',
+        radar = _im(['0000000',
                                    '0111110',
                                    '0111110',
                                    '0000110',
-                                   '0000000']))
-        invader = make_df('\n'.join(['11', '11']))
+                                   '0000000'])
+        invader = _im(['11', '11'])
         found = scan(radar, invader)
         self.assertEqual(found, {(1, 1), (2, 1), (3, 1), (4, 1), (4, 2)})
 
     # With noise
 
     def test_finds_invaders_with_noise_tolerance(self):
-        radar = make_df('\n'.join(['0000',
+        radar = _im(['0000',
                                    '0010',
                                    '0110',
-                                   '0000']))
-        alien = make_df('\n'.join(['11', '11']))
+                                   '0000'])
+        alien = _im(['11', '11'])
         found = scan(radar, alien, 0.25)
         self.assertEqual(found, {(-1, -1), (3, -1), (1, 1), (-1, 3), (3, 3)})
 
     def test_excludes_invader_with_too_much_noise(self):
-        radar = make_df('\n'.join(['0000',
+        radar = _im(['0000',
                                    '0010',
                                    '0010',
-                                   '0000']))
-        alien = make_df('\n'.join(['11', '11']))
+                                   '0000'])
+        alien = _im(['11', '11'])
         found = scan(radar, alien, 0.25)
         self.assertEqual(found, {(-1, -1), (3, -1), (-1, 3), (3, 3)})
 

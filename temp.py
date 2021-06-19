@@ -1,15 +1,14 @@
 import pandas as pd
+from matrices import RadarMatrix
 
-def make_df(s):
-    s = s.split('\n')
-    return pd.DataFrame([list(x) for x in s])
+def _im(s):
+    if '\n' in s:
+        s = s.split('\n')
+    return RadarMatrix([list(x) for x in s])
 
 def get_match_tolerance_threshold(total_chars, tolerance):
     return total_chars - (total_chars * tolerance)
 
-def crop(matrix, min_y, max_y, min_x, max_x):
-    matrix = matrix.iloc[min_y:max_y, min_x:max_x]
-    return matrix.reset_index(drop=True).T.reset_index(drop=True).T
 
 def scan(radar, invader, tolerance=0):  # A tolerance of 0 = must be perfect match, 0.2 = 80% match, etc
     i_length, i_width = invader.shape
@@ -20,10 +19,7 @@ def scan(radar, invader, tolerance=0):  # A tolerance of 0 = must be perfect mat
     print('--------')
     print(radar)
     print('--------')
-    y_padding = pd.DataFrame(columns=range(i_length - 1))
-    padded = pd.concat([y_padding, radar, y_padding], axis=1, ignore_index=True)
-    x_padding = pd.DataFrame(columns=padded.columns, index=['*' for x in range(i_width - 1)])
-    padded = pd.concat([x_padding, padded, x_padding], axis=0, ignore_index=True).fillna('*')
+    padded = pad(radar, i_length, i_width)
     r_length, r_width = padded.shape
     for x in range(r_width - i_width + 1):
         for y in range(r_length - i_length + 1):
@@ -39,8 +35,6 @@ def scan(radar, invader, tolerance=0):  # A tolerance of 0 = must be perfect mat
             print(f'matches: {number_of_matching_chars}')
             if number_of_matching_chars >= match_tolerance_threshold:
                 print(f'adding  {x - i_width + 1}, {y - i_length + 1}')
-                #import pdb; pdb.set_trace()
                 found.add((x - i_width + 1, y - i_length + 1))
 
     return found
-
