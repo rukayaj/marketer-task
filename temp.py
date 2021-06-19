@@ -11,6 +11,11 @@ def crop(matrix, min_y, max_y, min_x, max_x):
     matrix = matrix.iloc[min_y:max_y, min_x:max_x]
     return matrix.reset_index(drop=True).T.reset_index(drop=True).T
 
+def get_matches(row, invader_row):
+    invader_row = [x for x in invader_row]
+    import pdb; pdb.set_trace()
+
+
 def scan(radar, invader, tolerance=0):  # A tolerance of 0 = must be perfect match, 0.2 = 80% match, etc
     i_length, i_width = invader.shape
     match_tolerance_threshold = get_match_tolerance_threshold(i_width * i_length, tolerance)
@@ -29,14 +34,18 @@ def scan(radar, invader, tolerance=0):  # A tolerance of 0 = must be perfect mat
         for y in range(r_length - i_length + 1):
             crop_radar = crop(padded, y, y + i_length, x, x + i_width)
             print(f'{y}:{y + i_length}, {x}:{x + i_width}')
-            print(crop_radar)
+            print(f'crop radar: {crop_radar}')
             print('----')
-            number_of_matching_chars = invader.isin(crop_radar).sum().sum()
+            masked_invader = invader.copy()
+            for i, row in crop_radar.iteritems():
+                masked_invader[i] = ['*' if row[j] == '*' else x for j, x in enumerate(masked_invader[i])]
+            number_of_matching_chars = masked_invader.isin(crop_radar).sum().sum()
+            print(f'masked invader: {masked_invader}')
             print(f'matches: {number_of_matching_chars}')
             if number_of_matching_chars >= match_tolerance_threshold:
-                print(f'adding  {y}, {x}')
-                import pdb; pdb.set_trace()
-                found.add((x - i_width, y - i_length))
+                print(f'adding  {x - i_width + 1}, {y - i_length + 1}')
+                #import pdb; pdb.set_trace()
+                found.add((x - i_width + 1, y - i_length + 1))
 
     return found
     found = set()
