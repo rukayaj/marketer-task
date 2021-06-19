@@ -3,7 +3,8 @@ version: '3'
 services:
   space_invaders:
     build: .
-    image: space_invaders:latest
+    image: si:latest
+    #image: python:3.9.5-slim-buster
     command: /bin/bash
     volumes: 
       - .:/src
