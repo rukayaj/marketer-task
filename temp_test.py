@@ -1,4 +1,5 @@
 import unittest
+from pandas.testing import assert_frame_equal
 from space_invader_matrices import RadarMatrix, InvaderMatrix
 
 def _rm(_list):
@@ -6,6 +7,56 @@ def _rm(_list):
 
 def _im(_list):
     return InvaderMatrix(data_list=_list)
+
+
+class TestInvaderMatrix(unittest.TestCase):
+    def test_area(self):
+        self.assertEqual(_im(['001', '000']).area(), 6)
+
+    def test_get_tolerance_threshold(self):
+        invader = _im(['01', '00'])
+        self.assertEqual(invader.get_tolerance_threshold(0.25), 3)
+
+    def test_count_non_matches(self):
+        # Needs refactoring so it's easier to test
+        pass
+
+    def test_matched_in_success(self):
+        # Perhaps also needs refactoring
+        invader = _im(['01', '00'])
+        radar = _rm(['01', '00'])
+        self.assertTrue(invader.matched_in(radar, 0))
+
+    def test_matched_in_fail(self):
+        invader = _im(['00', '00'])
+        radar = _rm(['01', '00'])
+        self.assertFalse(invader.matched_in(radar, 0))
+
+    def test_matched_in_edge(self):
+        invader = _im(['01', '00'])
+        radar = _rm(['0*', '00'])
+        self.assertTrue(invader.matched_in(radar, 0))
+
+
+class TestRadar(unittest.TestCase):
+    def test_pad(self):
+        radar = _rm(['01', '00'])
+        expected  = _rm(['****',
+                         '****',
+                         '*01*',
+                         '*00*',
+                         '****',
+                         '****'])
+        assert_frame_equal(radar.pad(1, 2), expected)
+
+    def test_crop(self):
+        radar = _rm(['****',
+                     '*01*',
+                     '*00*',
+                     '****'])
+        res = radar.crop(min_y=1, max_y=3, min_x=1, max_x=3)
+        expected =  _rm(['01', '00'])
+        assert_frame_equal(res, expected)
 
 
 class TestRadarScan(unittest.TestCase):

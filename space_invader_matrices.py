@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 class _BaseMatrix(pd.DataFrame):
     @property
     def _constructor(self):
@@ -17,10 +18,10 @@ class RadarMatrix(_BaseMatrix):
     def _constructor(self):
         return RadarMatrix
 
-    def pad(self, y, x):
-        y_padding = RadarMatrix(columns=range(y - 1))
+    def pad(self, y, x):  # TODO double check that pad isn't already a pd.df method
+        y_padding = RadarMatrix(columns=range(y))
         padded = pd.concat([y_padding, self, y_padding], axis=1, ignore_index=True)
-        x_padding = RadarMatrix(columns=padded.columns, index=['*' for x in range(x - 1)])
+        x_padding = RadarMatrix(columns=padded.columns, index=['*' for x in range(x)])
         return pd.concat([x_padding, padded, x_padding], axis=0, ignore_index=True).fillna('*')
 
     def crop(self, min_y, max_y, min_x, max_x):
@@ -29,7 +30,7 @@ class RadarMatrix(_BaseMatrix):
 
     def scan(self, invader, tolerance=0):  # A tolerance of 0 = must be perfect match, 0.2 = 80% match, etc
         i_length, i_width = invader.shape
-        radar = self.pad(i_length, i_width)
+        radar = self.pad(i_length - 1, i_width - 1)
         r_length, r_width = radar.shape
         # TODO raise exception if radar is smaller than invader
         found = set()
@@ -61,9 +62,9 @@ class InvaderMatrix(_BaseMatrix):
         masked_invader = self.copy()
         for i, row in masker.iteritems():
             masked_invader[i] = ['*' if row[j] == '*' else x for j, x in enumerate(masked_invader[i])]
+        # The above should really be in a separate method
         return masked_invader.isin(masker).sum().sum()
 
     def matched_in(self, radar_subset, tolerance):
         number_of_matching_chars = self.count_non_matches(radar_subset)
-        threshold = self.get_tolerance_threshold(tolerance)
-        return number_of_matching_chars >= threshold
+        return number_of_matching_chars >= self.get_tolerance_threshold(tolerance)
