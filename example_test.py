@@ -16,6 +16,7 @@ class ProvidedExample(unittest.TestCase):
         radar = _rm(self.get_radar())
         # This shows that scan needs some major refactoring to be performant
         found = radar.scan(invader_a, 0)
+        # At this point we should now test to see if we found the invaders which we were supposed to find
         import pdb; pdb.set_trace()
 
     def get_invader_a(self):
